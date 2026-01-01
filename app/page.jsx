@@ -221,71 +221,129 @@ export default function GrannySquaresApp() {
         </div>
       </div>
 
-      {/* === LISTS === */}
+      {/* === TABLES === */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-xl">
-        {/* ЕГОР */}
-        <div className="bg-white rounded-2xl shadow p-4">
+
+        {/* === ЕГОР === */}
+        <div className="bg-white rounded-2xl shadow p-4 overflow-x-auto">
           <h2 className="font-semibold mb-3">Егор</h2>
-          <ul className="text-sm space-y-4">
-            {filteredEgor.map((s, i) => (
-              <li key={s.id} className="flex gap-3 items-center">
-                {s.photo && (
-                  <img
-                    src={s.photo}
-                    alt="square"
-                    className="w-16 h-16 object-cover rounded"
-                  />
-                )}
-                <div className="flex-1">
-                  <p>#{i + 1}: {s.colors}</p>
-                  <p className="text-xs text-neutral-500">{s.category}</p>
-                  {s.comment && <p className="text-xs mt-1">{s.comment}</p>}
-                  <p className="text-xs text-neutral-400 mt-1">
+
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="bg-neutral-200 text-left">
+                <th className="p-2">Фото</th>
+                <th className="p-2">Цвета</th>
+                <th className="p-2">Категория</th>
+                <th className="p-2">Дата</th>
+                <th className="p-2">Комментарий</th>
+                <th className="p-2 w-10"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {filteredEgor.map((s) => (
+                <tr key={s.id} className="border-b">
+                  <td className="p-2">
+                    {s.photo && (
+                      <img
+                        src={s.photo}
+                        alt="square"
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    )}
+                  </td>
+
+                  <td className="p-2">{s.colors}</td>
+                  <td className="p-2 text-neutral-600">{s.category}</td>
+
+                  <td className="p-2 text-neutral-500">
                     {new Date(s.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <button
-                  onClick={() => deleteSquare(s.id, "Егор")}
-                  className="text-red-500 hover:text-red-700 ml-2"
-                >
-                  ❌
-                </button>
-              </li>
-            ))}
-          </ul>
+                  </td>
+
+                  <td className="p-2 text-neutral-700">
+                    {s.comment || "—"}
+                  </td>
+
+                  <td className="p-2">
+                    <button
+                      onClick={() => deleteSquare(s.id, "Егор")}
+                      className="text-red-500 hover:text-red-700 text-lg"
+                    >
+                      ❌
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {filteredEgor.length === 0 && (
+            <p className="text-xs text-neutral-400 mt-2">
+              Нет квадратов с таким типом.
+            </p>
+          )}
         </div>
 
-        {/* МАША */}
-        <div className="bg-white rounded-2xl shadow p-4">
+        {/* === МАША === */}
+        <div className="bg-white rounded-2xl shadow p-4 overflow-x-auto">
           <h2 className="font-semibold mb-3">Маша</h2>
-          <ul className="text-sm space-y-4">
-            {filteredMasha.map((s, i) => (
-              <li key={s.id} className="flex gap-3 items-center">
-                {s.photo && (
-                  <img
-                    src={s.photo}
-                    alt="square"
-                    className="w-16 h-16 object-cover rounded"
-                  />
-                )}
-                <div className="flex-1">
-                  <p>#{i + 1}: {s.colors}</p>
-                  <p className="text-xs text-neutral-500">{s.category}</p>
-                  {s.comment && <p className="text-xs mt-1">{s.comment}</p>}
-                  <p className="text-xs text-neutral-400 mt-1">
+
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="bg-neutral-200 text-left">
+                <th className="p-2">Фото</th>
+                <th className="p-2">Цвета</th>
+                <th className="p-2">Категория</th>
+                <th className="p-2">Дата</th>
+                <th className="p-2">Комментарий</th>
+                <th className="p-2 w-10"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {filteredMasha.map((s) => (
+                <tr key={s.id} className="border-b">
+                  <td className="p-2">
+                    {s.photo && (
+                      <img
+                        src={s.photo}
+                        alt="square"
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    )}
+                  </td>
+
+                  <td className="p-2">{s.colors}</td>
+                  <td className="p-2 text-neutral-600">{s.category}</td>
+
+                  <td className="p-2 text-neutral-500">
                     {new Date(s.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <button
-                  onClick={() => deleteSquare(s.id, "Маша")}
-                  className="text-red-500 hover:text-red-700 ml-2"
-                >
-                  ❌
-                </button>
-              </li>
-            ))}
-          </ul>
+                  </td>
+
+                  <td className="p-2 text-neutral-700">
+                    {s.comment || "—"}
+                  </td>
+
+                  <td className="p-2">
+                    <button
+                      onClick={() => deleteSquare(s.id, "Маша")}
+                      className="text-red-500 hover:text-red-700 text-lg"
+                    >
+                      ❌
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {filteredMasha.length === 0 && (
+            <p className="text-xs text-neutral-400 mt-2">
+              Нет квадратов с таким типом.
+            </p>
+          )}
         </div>
+
       </div>
     </div>
   );
