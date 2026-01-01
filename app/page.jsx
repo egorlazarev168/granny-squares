@@ -8,12 +8,12 @@ export default function GrannySquaresApp() {
   const [colors, setColors] = useState("");
   const [comment, setComment] = useState("");
   const [photo, setPhoto] = useState(null);
-  const [createdAt, setCreatedAt] = useState(""); // ← новое состояние
+  const [createdAt, setCreatedAt] = useState("");
   const [author, setAuthor] = useState("Егор");
   const [animatedProgress, setAnimatedProgress] = useState(0);
   const [categoryFilter, setCategoryFilter] = useState("all");
 
-  // === ЗАГРУЗКА ИЗ localStorage ===
+  // === LOAD FROM LOCALSTORAGE ===
   useEffect(() => {
     const saved = localStorage.getItem("granny-squares");
     if (saved) {
@@ -23,7 +23,7 @@ export default function GrannySquaresApp() {
     }
   }, []);
 
-  // === СОХРАНЕНИЕ В localStorage ===
+  // === SAVE TO LOCALSTORAGE ===
   useEffect(() => {
     localStorage.setItem(
       "granny-squares",
@@ -31,26 +31,23 @@ export default function GrannySquaresApp() {
     );
   }, [egor, masha]);
 
-  // === ПРОГРЕСС ===
+  // === PROGRESS ===
   const total = egor.length + masha.length;
   const progressValue = Math.min(total, 100);
 
-  // === АНИМАЦИЯ ПРОГРЕССА ===
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setAnimatedProgress(progressValue);
-    }, 50);
-    return () => clearTimeout(timeout);
+    const t = setTimeout(() => setAnimatedProgress(progressValue), 50);
+    return () => clearTimeout(t);
   }, [progressValue]);
 
-  // === ЦВЕТ ШКАЛЫ ===
+  // === COLOR OF PROGRESS BAR ===
   const getProgressColor = () => {
     if (animatedProgress < 33) return "bg-red-500";
     if (animatedProgress < 66) return "bg-yellow-400";
     return "bg-green-500";
   };
 
-  // === ЗАГРУЗКА ФОТО ===
+  // === PHOTO UPLOAD ===
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -60,7 +57,7 @@ export default function GrannySquaresApp() {
     reader.readAsDataURL(file);
   };
 
-  // === КАТЕГОРИЯ ===
+  // === CATEGORY ===
   const getCategory = (colors) => {
     const count = colors
       .split(",")
@@ -72,7 +69,7 @@ export default function GrannySquaresApp() {
     return "многоцветный";
   };
 
-  // === ДОБАВИТЬ КВАДРАТ ===
+  // === ADD SQUARE ===
   const addSquare = () => {
     if (!colors.trim()) return;
 
@@ -82,33 +79,27 @@ export default function GrannySquaresApp() {
       comment,
       photo,
       createdAt: createdAt
-        ? new Date(createdAt).toISOString() // ← выбранная дата
-        : new Date().toISOString(),         // ← текущая дата
+        ? new Date(createdAt).toISOString()
+        : new Date().toISOString(),
       category: getCategory(colors),
     };
 
-    if (author === "Егор") {
-      setEgor((prev) => [...prev, square]);
-    } else {
-      setMasha((prev) => [...prev, square]);
-    }
+    if (author === "Егор") setEgor((p) => [...p, square]);
+    else setMasha((p) => [...p, square]);
 
     setColors("");
     setComment("");
     setPhoto(null);
-    setCreatedAt(""); // ← сбрасываем дату
+    setCreatedAt("");
   };
 
-  // === УДАЛИТЬ КВАДРАТ ===
+  // === DELETE ===
   const deleteSquare = (id, who) => {
-    if (who === "Егор") {
-      setEgor((prev) => prev.filter((s) => s.id !== id));
-    } else {
-      setMasha((prev) => prev.filter((s) => s.id !== id));
-    }
+    if (who === "Егор") setEgor((p) => p.filter((s) => s.id !== id));
+    else setMasha((p) => p.filter((s) => s.id !== id));
   };
 
-  // === СТАТИСТИКА ===
+  // === STATS ===
   const stats = {
     egor: egor.length,
     masha: masha.length,
@@ -120,7 +111,7 @@ export default function GrannySquaresApp() {
         : "Ничья",
   };
 
-  // === ФИЛЬТРАЦИЯ ===
+  // === FILTER ===
   const filterByCategory = (list) => {
     if (categoryFilter === "all") return list;
     return list.filter((s) => s.category === categoryFilter);
@@ -131,11 +122,9 @@ export default function GrannySquaresApp() {
 
   return (
     <div className="min-h-screen bg-neutral-100 flex flex-col items-center p-6 gap-6">
-      <h1 className="text-2xl font-bold">
-        Наш плед из бабушкиных квадратов
-      </h1>
+      <h1 className="text-2xl font-bold">Наш плед из бабушкиных квадратов</h1>
 
-      {/* === ШКАЛА ПРОГРЕССА === */}
+      {/* === PROGRESS BAR === */}
       <div className="w-full max-w-xl">
         <div className="relative h-10 bg-neutral-300 rounded-xl overflow-hidden shadow-inner">
           <div
@@ -148,14 +137,14 @@ export default function GrannySquaresApp() {
         </div>
       </div>
 
-      {/* === СТАТИСТИКА === */}
+      {/* === STATS === */}
       <div className="bg-white shadow rounded-xl p-4 w-full max-w-xl text-center space-y-1">
         <p>Егор: {stats.egor}</p>
         <p>Маша: {stats.masha}</p>
         <p className="font-semibold mt-1">Лидер: {stats.leader}</p>
       </div>
 
-      {/* === ФИЛЬТРЫ === */}
+      {/* === FILTER === */}
       <div className="bg-white shadow rounded-xl p-4 w-full max-w-xl flex flex-col gap-3">
         <div className="flex flex-wrap gap-3 items-center">
           <span className="text-sm text-neutral-600">Тип квадрата:</span>
@@ -172,7 +161,7 @@ export default function GrannySquaresApp() {
         </div>
       </div>
 
-      {/* === ДОБАВИТЬ КВАДРАТ === */}
+      {/* === ADD SQUARE === */}
       <div className="bg-white rounded-2xl shadow p-4 w-full max-w-xl flex flex-col gap-4">
         <div className="flex flex-wrap gap-3">
           <select
@@ -199,7 +188,6 @@ export default function GrannySquaresApp() {
           className="border rounded px-3 py-1"
         />
 
-        {/* === ВЫБОР ДАТЫ === */}
         <input
           type="date"
           value={createdAt}
@@ -233,7 +221,7 @@ export default function GrannySquaresApp() {
         </div>
       </div>
 
-      {/* === СПИСКИ === */}
+      {/* === LISTS === */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-xl">
         {/* ЕГОР */}
         <div className="bg-white rounded-2xl shadow p-4">
