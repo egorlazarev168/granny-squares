@@ -7,6 +7,7 @@ export default function GrannySquaresApp() {
   const [masha, setMasha] = useState([]);
   const [colors, setColors] = useState("");
   const [author, setAuthor] = useState("Егор");
+  const [animatedProgress, setAnimatedProgress] = useState(0);
 
   // === ЗАГРУЗКА ИЗ localStorage ===
   useEffect(() => {
@@ -18,13 +19,26 @@ export default function GrannySquaresApp() {
     }
   }, []);
 
-  // === СОХРАНЕНИЕ В localStorage ===
-  useEffect(() => {
-    localStorage.setItem(
-      "granny-squares",
-      JSON.stringify({ egor, masha })
-    );
-  }, [egor, masha]);
+// === СОХРАНЕНИЕ В localStorage ===
+useEffect(() => {
+  localStorage.setItem(
+    "granny-squares",
+    JSON.stringify({ egor, masha })
+  );
+}, [egor, masha]);
+
+// === ПРОГРЕСС === 
+const total = egor.length + masha.length;
+const progress = Math.min((total / 100) * 100, 100);
+  
+// === АНИМАЦИЯ ПРОГРЕССА ===
+useEffect(() => {
+  const timeout = setTimeout(() => {
+    setAnimatedProgress(progress);
+  }, 50);
+
+  return () => clearTimeout(timeout);
+}, [progress]);
 
   const addSquare = () => {
     if (!colors.trim()) return;
@@ -51,9 +65,6 @@ export default function GrannySquaresApp() {
     }
   };
 
-  const total = egor.length + masha.length;
-  const progress = Math.min((total / 100) * 100, 100);
-
   return (
     <div className="min-h-screen bg-neutral-100 flex flex-col items-center p-6 gap-6">
       <h1 className="text-2xl font-bold">
@@ -64,8 +75,8 @@ export default function GrannySquaresApp() {
       <div className="w-full max-w-xl">
         <div className="h-6 bg-neutral-300 rounded-full overflow-hidden">
           <div
-            className="h-6 bg-emerald-500 transition-all duration-500"
-            style={{ width: `${progress}%` }}
+           className="h-6 bg-emerald-500 transition-all duration-700 ease-out"
+            style={{ width: `${animatedProgress}%` }}
           />
         </div>
         <p className="text-center mt-2">{total} / 100 квадратов</p>
