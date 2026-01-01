@@ -8,6 +8,7 @@ export default function GrannySquaresApp() {
   const [colors, setColors] = useState("");
   const [comment, setComment] = useState("");
   const [photo, setPhoto] = useState(null);
+  const [createdAt, setCreatedAt] = useState(""); // ← новое состояние
   const [author, setAuthor] = useState("Егор");
   const [animatedProgress, setAnimatedProgress] = useState(0);
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -80,7 +81,9 @@ export default function GrannySquaresApp() {
       colors,
       comment,
       photo,
-      createdAt: new Date().toISOString(),
+      createdAt: createdAt
+        ? new Date(createdAt).toISOString() // ← выбранная дата
+        : new Date().toISOString(),         // ← текущая дата
       category: getCategory(colors),
     };
 
@@ -93,6 +96,7 @@ export default function GrannySquaresApp() {
     setColors("");
     setComment("");
     setPhoto(null);
+    setCreatedAt(""); // ← сбрасываем дату
   };
 
   // === УДАЛИТЬ КВАДРАТ ===
@@ -192,6 +196,14 @@ export default function GrannySquaresApp() {
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="Комментарий"
+          className="border rounded px-3 py-1"
+        />
+
+        {/* === ВЫБОР ДАТЫ === */}
+        <input
+          type="date"
+          value={createdAt}
+          onChange={(e) => setCreatedAt(e.target.value)}
           className="border rounded px-3 py-1"
         />
 
