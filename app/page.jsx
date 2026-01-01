@@ -10,14 +10,11 @@ export default function GrannySquaresApp() {
   const [photo, setPhoto] = useState(null);
   const [author, setAuthor] = useState("Егор");
   const [animatedProgress, setAnimatedProgress] = useState(0);
-  const [categoryFilter, setCategoryFilter] = useState("all"); // all | однотонный | двухцветный | многоцветный
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   // === ЗАГРУЗКА ИЗ localStorage ===
   useEffect(() => {
-    const saved = typeof window !== "undefined"
-      ? localStorage.getItem("granny-squares")
-      : null;
-
+    const saved = localStorage.getItem("granny-squares");
     if (saved) {
       const data = JSON.parse(saved);
       setEgor(data.egor || []);
@@ -27,13 +24,15 @@ export default function GrannySquaresApp() {
 
   // === СОХРАНЕНИЕ В localStorage ===
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    localStorage.setItem("granny-squares", JSON.stringify({ egor, masha }));
+    localStorage.setItem(
+      "granny-squares",
+      JSON.stringify({ egor, masha })
+    );
   }, [egor, masha]);
 
   // === ПРОГРЕСС ===
   const total = egor.length + masha.length;
-  const progressValue = Math.min(total, 100); // 0–100
+  const progressValue = Math.min(total, 100);
 
   // === АНИМАЦИЯ ПРОГРЕССА ===
   useEffect(() => {
@@ -42,6 +41,13 @@ export default function GrannySquaresApp() {
     }, 50);
     return () => clearTimeout(timeout);
   }, [progressValue]);
+
+  // === ЦВЕТ ШКАЛЫ ===
+  const getProgressColor = () => {
+    if (animatedProgress < 33) return "bg-red-500";
+    if (animatedProgress < 66) return "bg-yellow-400";
+    return "bg-green-500";
+  };
 
   // === ЗАГРУЗКА ФОТО ===
   const handlePhotoUpload = (e) => {
@@ -110,14 +116,7 @@ export default function GrannySquaresApp() {
         : "Ничья",
   };
 
-  // === ЦВЕТ ПРОГРЕССА ===
-  const getProgressColor = () => {
-    if (animatedProgress < 33) return "bg-red-500";
-    if (animatedProgress < 66) return "bg-yellow-400";
-    return "bg-green-500";
-  };
-
-  // === ФИЛЬТРАЦИЯ ПО КАТЕГОРИИ ===
+  // === ФИЛЬТРАЦИЯ ===
   const filterByCategory = (list) => {
     if (categoryFilter === "all") return list;
     return list.filter((s) => s.category === categoryFilter);
@@ -132,25 +131,27 @@ export default function GrannySquaresApp() {
         Наш плед из бабушкиных квадратов
       </h1>
 
-      {/* Progress bar */}
-      <div className="w-full max-w-xl space-y-2">
-        <div className="h-6 bg-neutral-300 rounded-full overflow-hidden">
+      {/* === ШКАЛА ПРОГРЕССА === */}
+      <div className="w-full max-w-xl">
+        <div className="relative h-10 bg-neutral-300 rounded-xl overflow-hidden shadow-inner">
           <div
-            className={`h-6 transition-all duration-700 ease-out ${getProgressColor()}`}
+            className={`absolute left-0 top-0 h-full transition-all duration-700 ease-out ${getProgressColor()}`}
             style={{ width: `${animatedProgress}%` }}
           />
+          <div className="absolute inset-0 flex items-center justify-center font-semibold text-neutral-800">
+            {total} / 100
+          </div>
         </div>
-        <p className="text-center">{total} / 100 квадратов</p>
       </div>
 
-      {/* Stats */}
+      {/* === СТАТИСТИКА === */}
       <div className="bg-white shadow rounded-xl p-4 w-full max-w-xl text-center space-y-1">
         <p>Егор: {stats.egor}</p>
         <p>Маша: {stats.masha}</p>
         <p className="font-semibold mt-1">Лидер: {stats.leader}</p>
       </div>
 
-      {/* Filters */}
+      {/* === ФИЛЬТРЫ === */}
       <div className="bg-white shadow rounded-xl p-4 w-full max-w-xl flex flex-col gap-3">
         <div className="flex flex-wrap gap-3 items-center">
           <span className="text-sm text-neutral-600">Тип квадрата:</span>
@@ -167,7 +168,7 @@ export default function GrannySquaresApp() {
         </div>
       </div>
 
-      {/* Add square */}
+      {/* === ДОБАВИТЬ КВАДРАТ === */}
       <div className="bg-white rounded-2xl shadow p-4 w-full max-w-xl flex flex-col gap-4">
         <div className="flex flex-wrap gap-3">
           <select
@@ -220,7 +221,7 @@ export default function GrannySquaresApp() {
         </div>
       </div>
 
-      {/* Lists */}
+      {/* === СПИСКИ === */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-xl">
         {/* ЕГОР */}
         <div className="bg-white rounded-2xl shadow p-4">
@@ -236,13 +237,9 @@ export default function GrannySquaresApp() {
                   />
                 )}
                 <div className="flex-1">
-                  <p>
-                    #{i + 1}: {s.colors}
-                  </p>
+                  <p>#{i + 1}: {s.colors}</p>
                   <p className="text-xs text-neutral-500">{s.category}</p>
-                  {s.comment && (
-                    <p className="text-xs mt-1">{s.comment}</p>
-                  )}
+                  {s.comment && <p className="text-xs mt-1">{s.comment}</p>}
                   <p className="text-xs text-neutral-400 mt-1">
                     {new Date(s.createdAt).toLocaleDateString()}
                   </p>
@@ -255,11 +252,6 @@ export default function GrannySquaresApp() {
                 </button>
               </li>
             ))}
-            {filteredEgor.length === 0 && (
-              <p className="text-xs text-neutral-400">
-                Нет квадратов с таким типом.
-              </p>
-            )}
           </ul>
         </div>
 
@@ -277,13 +269,9 @@ export default function GrannySquaresApp() {
                   />
                 )}
                 <div className="flex-1">
-                  <p>
-                    #{i + 1}: {s.colors}
-                  </p>
+                  <p>#{i + 1}: {s.colors}</p>
                   <p className="text-xs text-neutral-500">{s.category}</p>
-                  {s.comment && (
-                    <p className="text-xs mt-1">{s.comment}</p>
-                  )}
+                  {s.comment && <p className="text-xs mt-1">{s.comment}</p>}
                   <p className="text-xs text-neutral-400 mt-1">
                     {new Date(s.createdAt).toLocaleDateString()}
                   </p>
@@ -296,11 +284,6 @@ export default function GrannySquaresApp() {
                 </button>
               </li>
             ))}
-            {filteredMasha.length === 0 && (
-              <p className="text-xs text-neutral-400">
-                Нет квадратов с таким типом.
-              </p>
-            )}
           </ul>
         </div>
       </div>
