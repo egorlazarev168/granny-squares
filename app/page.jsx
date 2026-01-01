@@ -65,7 +65,13 @@ useEffect(() => {
     }
   };
 
-  return (
+const getProgressColor = () => {
+  if (progress < 33) return "bg-red-500";
+  if (progress < 66) return "bg-yellow-400";
+  return "bg-green-500";
+};
+  
+return (
     <div className="min-h-screen bg-neutral-100 flex flex-col items-center p-6 gap-6">
       <h1 className="text-2xl font-bold">
         Наш плед из бабушкиных квадратов
@@ -75,7 +81,7 @@ useEffect(() => {
       <div className="w-full max-w-xl">
         <div className="h-6 bg-neutral-300 rounded-full overflow-hidden">
           <div
-           className="h-6 bg-emerald-500 transition-all duration-700 ease-out"
+           className={`h-6 transition-all duration-700 ease-out ${getProgressColor()}`}
             style={{ width: `${animatedProgress}%` }}
           />
         </div>
