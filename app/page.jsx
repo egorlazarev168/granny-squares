@@ -1,28 +1,64 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function GrannySquaresApp() {
-  const [total, setTotal] = useState(0);
   const [egor, setEgor] = useState([]);
   const [masha, setMasha] = useState([]);
   const [colors, setColors] = useState("");
   const [author, setAuthor] = useState("Егор");
 
+  // === ЗАГРУЗКА ИЗ localStorage ===
+  useEffect(() => {
+    const saved = localStorage.getItem("granny-squares");
+    if (saved) {
+      const data = JSON.parse(saved);
+      setEgor(data.egor || []);
+      setMasha(data.masha || []);
+    }
+  }, []);
+
+  // === СОХРАНЕНИЕ В localStorage ===
+  useEffect(() => {
+    localStorage.setItem(
+      "granny-squares",
+      JSON.stringify({ egor, masha })
+    );
+  }, [egor, masha]);
+
   const addSquare = () => {
     if (!colors.trim()) return;
-    const square = { id: Date.now(), colors };
-    if (author === "Егор") setEgor([...egor, square]);
-    else setMasha([...masha, square]);
-    setTotal(total + 1);
+
+    const square = {
+      id: Date.now(),
+      colors,
+    };
+
+    if (author === "Егор") {
+      setEgor([...egor, square]);
+    } else {
+      setMasha([...masha, square]);
+    }
+
     setColors("");
   };
 
+  const deleteSquare = (id, who) => {
+    if (who === "Егор") {
+      setEgor(egor.filter((s) => s.id !== id));
+    } else {
+      setMasha(masha.filter((s) => s.id !== id));
+    }
+  };
+
+  const total = egor.length + masha.length;
   const progress = Math.min((total / 100) * 100, 100);
 
   return (
     <div className="min-h-screen bg-neutral-100 flex flex-col items-center p-6 gap-6">
-      <h1 className="text-2xl font-bold">Наш плед из бабушкиных квадратов</h1>
+      <h1 className="text-2xl font-bold">
+        Наш плед из бабушкиных квадратов
+      </h1>
 
       {/* Progress bar */}
       <div className="w-full max-w-xl">
@@ -46,6 +82,7 @@ export default function GrannySquaresApp() {
             <option>Егор</option>
             <option>Маша</option>
           </select>
+
           <input
             value={colors}
             onChange={(e) => setColors(e.target.value)}
@@ -53,6 +90,7 @@ export default function GrannySquaresApp() {
             className="flex-1 border rounded px-2 py-1"
           />
         </div>
+
         <button
           onClick={addSquare}
           className="bg-emerald-500 text-white rounded-xl py-2 hover:bg-emerald-600"
@@ -63,22 +101,47 @@ export default function GrannySquaresApp() {
 
       {/* Lists */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-xl">
+        {/* ЕГОР */}
         <div className="bg-white rounded-2xl shadow p-4">
           <h2 className="font-semibold mb-2">Егор</h2>
           <ul className="text-sm space-y-1">
             {egor.map((s, i) => (
-              <li key={s.id}>
-                #{i + 1}: {s.colors}
+              <li
+                key={s.id}
+                className="flex justify-between items-center"
+              >
+                <span>
+                  #{i + 1}: {s.colors}
+                </span>
+                <button
+                  onClick={() => deleteSquare(s.id, "Егор")}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  ❌
+                </button>
               </li>
             ))}
           </ul>
         </div>
+
+        {/* МАША */}
         <div className="bg-white rounded-2xl shadow p-4">
           <h2 className="font-semibold mb-2">Маша</h2>
           <ul className="text-sm space-y-1">
             {masha.map((s, i) => (
-              <li key={s.id}>
-                #{i + 1}: {s.colors}
+              <li
+                key={s.id}
+                className="flex justify-between items-center"
+              >
+                <span>
+                  #{i + 1}: {s.colors}
+                </span>
+                <button
+                  onClick={() => deleteSquare(s.id, "Маша")}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  ❌
+                </button>
               </li>
             ))}
           </ul>
